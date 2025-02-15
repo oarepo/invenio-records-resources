@@ -62,10 +62,14 @@ class Transfer(ABC):
 
     def init_file(self, record, file_metadata):
         """Initialize a file and return a file record."""
+
+        # do not modify the original metadata as other file service components
+        # might need it
+        metadata = {**file_metadata}
         return record.files.create(
-            key=file_metadata.pop("key"),
-            transfer=file_metadata.pop("transfer"),
-            data=file_metadata,
+            key=metadata.pop("key"),
+            transfer=metadata.pop("transfer"),
+            data=metadata,
         )
 
     @property
