@@ -333,7 +333,8 @@ class FilesManager(MutableMapping):
                 else:
                     dst_obj = rf.object_version
 
-                # Copy file record - always pass dict with metadata to ensure transfer type is copied over
+                # Copy file record - always pass dict with metadata 
+                # to ensure transfer is copied over
                 self[key] = dst_obj, dict(rf)
 
         self.default_preview = src_files.default_preview
@@ -373,10 +374,8 @@ class FilesManager(MutableMapping):
                 f_key = obj_or_key.key
                 self[f_key] = obj_or_key
                 rf = src_files[f_key]
-                if rf.metadata is not None:
-                    self[f_key] = obj_or_key, dict(rf)
-                else:
-                    self[f_key] = obj_or_key
+                # always pass dict with metadata to ensure transfer is copied over
+                self[f_key] = obj_or_key, dict(rf)
 
     @property
     def entries(self):
