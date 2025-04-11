@@ -12,7 +12,6 @@
 
 from flask import current_app
 from invenio_i18n import gettext as _
-from marshmallow import ValidationError
 
 from invenio_records_resources.proxies import current_transfer_registry
 from invenio_records_resources.services.files.transfer import TransferStatus
@@ -172,6 +171,7 @@ class FileService(Service):
                 "create_files",
                 record=record,
                 file_metadata=created_file,
+                data=data,
                 **kwargs,
             )
 
