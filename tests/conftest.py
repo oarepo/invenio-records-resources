@@ -51,6 +51,9 @@ def app_config(app_config):
         "invenio_jsonschemas.proxies.current_refresolver_store"
     )
 
+    # for http Range testing
+    app_config["FILES_REST_ALLOW_RANGE_REQUESTS"] = True
+
     app_config["THEME_FRONTPAGE"] = False
 
     return app_config

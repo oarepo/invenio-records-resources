@@ -584,3 +584,63 @@ def test_files_multipart_api_flow(
     res = client.get(f"/mocks/{id_}/files/test.pdf/content", headers=headers)
     assert res.status_code == 200
     assert res.data == b"12345678901234567"
+
+
+def test_range_requests(app, client, search_clear, headers, input_data, location):
+    """Test range requests for file content."""
+    res = client.post("/mocks", headers=headers, json=input_data)
+    assert res.status_code == 201
+    id_ = res.json["id"]
+    assert res.json["links"]["files"].endswith(f"/api/mocks/{id_}/files")
+
+    # Upload a file
+    res = client.post(
+        f"/mocks/{id_}/files",
+        headers=headers,
+        json=[
+            {"key": "test.bin", "metadata": {"title": "Test file"}},
+        ],
+    )
+    assert res.status_code == 201
+    res = client.put(
+        f"/mocks/{id_}/files/test.bin/content",
+        headers={
+            "content-type": "application/octet-stream",
+            "accept": "application/json",
+        },
+        data=BytesIO(b"12345678901234567"),
+    )
+    assert res.status_code == 200
+    res = client.post(f"/mocks/{id_}/files/test.bin/commit", headers=headers)
+    assert res.status_code == 200
+
+    # Test range requests
+    res = client.head(
+        f"/mocks/{id_}/files/test.bin/content",
+        headers={
+            **headers,
+        },
+    )
+    assert res.status_code == 200
+    assert "Accept-Ranges" in res.headers
+    assert res.headers["Accept-Ranges"] == "bytes"
+
+    res = client.get(
+        f"/mocks/{id_}/files/test.bin/content",
+        headers={
+            **headers,
+            "Range": "bytes=0-9",
+        },
+    )
+    assert res.status_code == 206
+    assert res.data == b"1234567890"
+
+    res = client.get(
+        f"/mocks/{id_}/files/test.bin/content",
+        headers={
+            **headers,
+            "Range": "bytes=10-16",
+        },
+    )
+    assert res.status_code == 206
+    assert res.data == b"1234567"
