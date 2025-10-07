@@ -18,7 +18,7 @@ from .components import (
     FileProcessorComponent,
 )
 from .processors import ImageMetadataExtractor
-from .results import FileItem, FileList
+from .results import ExtractedFileItem, FileItem, FileList, ListingFileItemList
 from .schema import FileSchema
 
 
@@ -36,6 +36,8 @@ class FileServiceConfig(ServiceConfig):
 
     file_result_item_cls = FileItem
     file_result_list_cls = FileList
+    file_result_listing_cls = ListingFileItemList
+    file_extracted_item_cls = ExtractedFileItem
 
     file_schema = FileSchema
 
@@ -59,3 +61,5 @@ class FileServiceConfig(ServiceConfig):
     file_processors = [
         ImageMetadataExtractor(),
     ]
+
+    file_extractors = []

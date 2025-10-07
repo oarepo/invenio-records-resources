@@ -30,6 +30,7 @@ from invenio_records_resources.services.records.params.querystr import (
 )
 
 from .api import Record, RecordWithFiles
+from .extractor import DummyFileExtractor
 from .permissions import PermissionPolicy
 from .schemas import RecordSchema, RecordWithFilesSchema
 
@@ -112,3 +113,5 @@ class FileServiceConfig(FileServiceConfig):
             "mocks_files.create_commit", params=["pid_value", "key"]
         ),
     }
+
+    file_extractors = [DummyFileExtractor()]

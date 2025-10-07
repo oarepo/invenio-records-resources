@@ -11,7 +11,7 @@
 """File service results."""
 
 from ...proxies import current_transfer_registry
-from ..base import ServiceListResult
+from ..base import ServiceItemResult, ServiceListResult
 from ..records.results import RecordItem
 
 
@@ -149,3 +149,64 @@ class FileList(ServiceListResult):
                 }
             )
         return result
+
+
+class ListingFileItemList(ServiceListResult):
+    """Listing result for an archived file."""
+
+    def __init__(self, listing):
+        """Init the listing result."""
+        self._listing = listing
+
+    @property
+    def entries(self):
+        """Iterator over the hits."""
+        if not self._listing:
+            return []
+
+        for entry in self._listing:
+            yield entry
+
+    def to_dict(self):
+        """Return result as a dictionary."""
+        if not self._listing:
+            return {}
+
+        return self._listing
+
+
+class ExtractedFileItem(ServiceItemResult):
+    """Extracted archived file item(s) with a send_file defined function."""
+
+    def __init__(self, file_, extracted_file):
+        """Constructor."""
+        self._file = file_
+        self._extracted = extracted_file
+
+    @property
+    def file_id(self):
+        """Get the record id."""
+        return self._file.key
+
+    @property
+    def _obj(self):
+        """Return the object to dump."""
+        return self._file
+
+    def send_file(self, restricted=True, as_attachment=False):
+        """Return file stream."""
+        if not self._extracted:
+            return None
+
+        return self._extracted.send_file()
+
+    def open_stream(self, mode):
+        """Return a file stream context manager."""
+        return self._file.open_stream(mode)
+
+    def get_stream(self, mode):
+        """Return a file stream.
+
+        It is up to the caller to close the steam.
+        """
+        return self._file.get_stream(mode)

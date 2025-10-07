@@ -61,6 +61,14 @@ class FileService(Service):
         """Create a new instance of the resource list."""
         return self.config.file_result_list_cls(*args, **kwargs)
 
+    def file_result_listing(self, *args, **kwargs):
+        """Create a new instance of the resource listing."""
+        return self.config.file_result_listing_cls(*args, **kwargs)
+
+    def file_extracted_result(self, *args, **kwargs):
+        """Create a new instance of the resource listing."""
+        return self.config.file_extracted_item_cls(*args, **kwargs)
+
     def file_links_list_tpl(self, id_):
         """Return a link template for list results."""
         return LinksTemplate(
@@ -412,3 +420,33 @@ class FileService(Service):
             errors=errors,
             links_tpl=self.file_links_item_tpl(id_),
         )
+
+    def get_container_listing(self, identity, id_, file_key):
+        """List the files in the container of a record."""
+        from invenio_access.permissions import system_identity
+
+        record = self._get_record(
+            id_, system_identity, "get_content_files", file_key=file_key
+        )
+        file_record = record.files[file_key]
+
+        for e in self.config.file_extractors:
+            if e.can_process(file_record):
+                listing = e.list(file_record)
+                break
+
+        return self.file_result_listing(listing)
+
+    def extract_from_container(self, identity, id_, file_key, path):
+        """Extract a specific file or directory from the container of a record."""
+        from invenio_access.permissions import system_identity
+
+        record = self._get_record(id_, system_identity, "get_content_files")
+        file_record = record.files[file_key]
+
+        for e in self.config.file_extractors:
+            if e.can_process(file_record):
+                protocol_with_send_file = e.extract(file_record, path)
+                break
+
+        return self.file_extracted_result(file_record, protocol_with_send_file)

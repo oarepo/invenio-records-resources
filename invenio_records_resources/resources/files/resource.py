@@ -41,6 +41,13 @@ request_view_args = request_parser(
     location="view_args",
 )
 
+request_extract_args = request_parser(
+    {
+        "path": ma.fields.Str(required=True),
+    },
+    location="view_args",
+)
+
 request_data = request_body_parser(
     parsers={"application/json": RequestBodyParser(JSONDeserializer())},
     default_content_type="application/json",
@@ -146,6 +153,12 @@ class FileResource(ErrorHandlersMixin, Resource):
                         self.upload_multipart_content,
                     ),
                 ]
+
+        url_rules += [
+            route("GET", routes["list-container"], self.list_container),
+            route("GET", routes["item-extract"], self.extract_item),
+        ]
+
         return url_rules
 
     @request_view_args
@@ -310,3 +323,26 @@ class FileResource(ErrorHandlersMixin, Resource):
         )
 
         return item.to_dict(), 200
+
+    @request_view_args
+    @response_handler()
+    def list_container(self):
+        """List files in a container file."""
+        listing = self.service.get_container_listing(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            resource_requestctx.view_args.get("key"),
+        )
+        return listing.to_dict(), 200
+
+    @request_view_args
+    @request_extract_args
+    def extract_item(self):
+        """Extract a specific file or directory from the container of a record."""
+        extracted = self.service.extract_from_container(
+            g.identity,
+            resource_requestctx.view_args["pid_value"],
+            resource_requestctx.view_args.get("key"),
+            resource_requestctx.view_args.get("path"),
+        )
+        return extracted.send_file()

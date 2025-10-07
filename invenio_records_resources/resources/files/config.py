@@ -27,6 +27,8 @@ class FileResourceConfig(ResourceConfig):
         "item-multipart-content": "/files/<path:key>/content/<int:part>",
         "item-commit": "/files/<path:key>/commit",
         "list-archive": "/files-archive",
+        "list-container": "/files/<path:key>/container",
+        "item-extract": "/files/<path:key>/container/<path:path>",
     }
     error_handlers = {
         **ResourceConfig.error_handlers,
