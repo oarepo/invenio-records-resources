@@ -257,6 +257,7 @@ class RecordService(Service, RecordIndexerMixin):
             links_item_tpl=self.links_item_tpl,
             expandable_fields=self.expandable_fields,
             expand=expand,
+            **kwargs
         )
 
     def scan(
