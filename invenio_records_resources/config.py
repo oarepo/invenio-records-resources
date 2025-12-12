@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2020-2022 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2025 CESNET.
+# Copyright (C) 2025 CESNET i.a.l.e.
 #
 # Invenio-Records-Resources is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -22,6 +22,9 @@ Only file URLs from these domains will be allowed to be fetched.
 
 RECORDS_RESOURCES_IMAGE_FORMATS = [".jpg", ".jpeg", ".jp2", ".png", ".tif", ".tiff"]
 """Which image formats to extract metadata for."""
+
+RECORDS_RESOURCES_ZIP_FORMATS = [".zip"]
+"""Which zip formats to extract metadata for."""
 
 RECORDS_RESOURCES_ALLOW_EMPTY_FILES = True
 """Allow empty files to be uploaded."""
