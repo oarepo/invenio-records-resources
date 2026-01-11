@@ -63,7 +63,7 @@ class LabelledFacetMixin:
                 {
                     "key": key,
                     "doc_count": self.get_metric(bucket),
-                    "label": label_map[key],
+                    "label": label_map.get(key, key),
                     "is_selected": self.is_filtered(key, filter_values),
                 }
             )
