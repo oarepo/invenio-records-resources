@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2022-2024 CERN.
-# SPDX-FileCopyrightText: 2025 CESNET.
+# SPDX-FileCopyrightText: 2025-2026 CESNET.
 # SPDX-License-Identifier: MIT
 
 """Files tasks."""
